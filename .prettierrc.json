@@ -1,0 +1,17 @@
+{
+    "$schema": "https://json.schemastore.org/prettierrc",
+    "semi": true,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "tabWidth": 4,
+    "bracketSpacing": true,
+    "printWidth": 140,
+    "bracketSameLine": false,
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "singleAttributePerLine": false,
+    "endOfLine": "lf",
+    "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+    "importOrder": ["<BUILTIN_MODULES>", "", "<THIRD_PARTY_MODULES>", "", "^(vite|@vitejs)", "", "^@/(.*)$", "", "^~/(.*)$", "", "^[./]"],
+    "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"]
+}
