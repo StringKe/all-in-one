@@ -27,8 +27,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        },
-        "types": ["unplugin-icons/types/react"]
+        }
     },
     "include": [".eslintrc.cjs", "next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.js", ".next/types/**/*.ts"],
     "exclude": ["node_modules"]
