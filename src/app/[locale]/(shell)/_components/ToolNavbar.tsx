@@ -51,6 +51,7 @@ function RenderRouter({ router, level }: { router: IToolRouter; level: number })
 
     return (
         <NavLink
+            active={pathname === router.url}
             key={router.id}
             href={router.url}
             label={router.name}
