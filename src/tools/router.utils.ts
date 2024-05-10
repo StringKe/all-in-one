@@ -19,3 +19,14 @@ export function eachRouter(routers: IToolRouterArray, callback: (router: IToolRo
         }
     });
 }
+
+export function getFlatRouter(skipGroup = true) {
+    const result: IToolRouter[] = [];
+    eachRouter(toolRouter, (router) => {
+        if (skipGroup && router.children.length > 0) {
+            return;
+        }
+        result.push(router);
+    });
+    return result;
+}

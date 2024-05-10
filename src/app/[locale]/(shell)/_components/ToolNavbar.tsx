@@ -3,6 +3,8 @@ import { get } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { Logo } from '@/components/Logo';
+import { searchHandlers } from '@/components/Search';
+import { SearchControl } from '@/components/SearchControl';
 import { usePathname } from '@/i18n';
 import { toolRouter } from '@/tools';
 import { type IToolRouter } from '@/tools/types';
@@ -72,7 +74,7 @@ export function ToolNavbar({ opened, toggle }: { opened: boolean; toggle: () => 
             <AppShell.Section component={Stack}>
                 <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
                 <Logo />
-                <Input placeholder={'Search is simple...'} />
+                <SearchControl onClick={searchHandlers.open} />
             </AppShell.Section>
             <AppShell.Section grow my='md' component={ScrollArea}>
                 {toolRouter.map((router) => (
