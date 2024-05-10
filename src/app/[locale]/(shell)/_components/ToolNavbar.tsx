@@ -1,4 +1,6 @@
-import { AppShell, Burger, Input, NavLink, ScrollArea, Stack } from '@mantine/core';
+'use client';
+
+import { AppShell, Burger, NavLink, ScrollArea, Stack } from '@mantine/core';
 import { get } from 'lodash-es';
 import { useMemo } from 'react';
 

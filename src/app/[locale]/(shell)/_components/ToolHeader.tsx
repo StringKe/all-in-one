@@ -1,3 +1,5 @@
+'use client';
+
 import { Anchor, AppShell, Breadcrumbs, Burger, Group } from '@mantine/core';
 import { useMemo } from 'react';
 

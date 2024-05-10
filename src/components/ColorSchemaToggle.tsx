@@ -1,13 +1,20 @@
+'use client';
+
 import { ActionIcon, Button, Popover, Stack, useMantineColorScheme } from '@mantine/core';
 import { IconMoon, IconSun, IconSunMoon } from '@tabler/icons-react';
 
 export function ColorSchemaToggle() {
     const { setColorScheme, colorScheme } = useMantineColorScheme();
+
     return (
         <Popover>
             <Popover.Target>
-                <ActionIcon variant={'subtle'}>
-                    {colorScheme === 'light' ? <IconSun /> : colorScheme === 'dark' ? <IconMoon /> : <IconSunMoon />}
+                <ActionIcon variant={'subtle'} component={'div'}>
+                    <div>
+                        {colorScheme === 'light' && <IconSun />}
+                        {colorScheme === 'dark' && <IconMoon />}
+                        {colorScheme === 'auto' && <IconSunMoon />}
+                    </div>
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown>

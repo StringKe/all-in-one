@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, rem, type BoxProps } from '@mantine/core';
 import clsx from 'clsx';
 import { Honk } from 'next/font/google';
