@@ -1,6 +1,5 @@
 import { EncodeDecodeUrlTool } from '@/tools';
 
-export default function EncodeDecodeUrlToolPage(){
-    return <EncodeDecodeUrlTool />
+export default function EncodeDecodeUrlToolPage() {
+    return <EncodeDecodeUrlTool />;
 }
-        
