@@ -2,7 +2,9 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { camelCase } from 'lodash-es';
-import ts from 'ts-morph';
+import ts, { ScriptTarget } from 'ts-morph';
+
+const factory = ts.ts.factory;
 
 const projectRootPath = resolve(join(dirname(fileURLToPath(import.meta.url)), '../'));
 const sourcePath = join(projectRootPath, 'src');
@@ -59,18 +61,45 @@ const toolExportRouters = routerResult.map(({ filePath, router }) => {
         if (name.endsWith('Tool')) {
             nameToolsCount++;
             if (nameToolsCount > 1) {
-                throw new Error(`Duplicate export: ${name}`);
-            }
-            if (declarations.length !== 1) {
-                throw new Error(`Tool export ${name} must be a function`);
+                throw new Error(`Duplicate export: ${name} ${filePath}`);
             }
             const declaration = declarations[0];
             if (!ts.Node.isFunctionDeclaration(declaration)) {
-                throw new Error(`Tool export ${name} must be a function`);
+                throw new Error(`Tool export ${name} must be a function ${filePath}`);
             } else {
                 declaration.rename(exportName);
             }
         }
+    }
+
+    let hasMetadata = false;
+    // 扫描所有的 expressions
+    sourceFile.forEachChild((node) => {
+        if (ts.Node.isExpressionStatement(node)) {
+            // 获取是否 xxx.metadata = {}
+            const expression = node.getExpression();
+            if (ts.Node.isBinaryExpression(expression)) {
+                // 判断是否是 any.metadata
+                const left = expression.getLeft();
+                if (ts.Node.isPropertyAccessExpression(left)) {
+                    const leftExpression = left.getExpression();
+                    const leftName = left.getName();
+                    if (leftName === 'metadata') {
+                        // 将 xxx 修改为 exportName
+                        leftExpression.replaceWithText(exportName);
+                        hasMetadata = true;
+                    }
+                }
+            }
+        }
+    });
+    if (!hasMetadata) {
+        sourceFile.addStatements([
+            `${exportName}.metadata = {
+        tKey: 'tools:${exportName.replace('Tool', '')}',
+        icon: undefined,
+};`,
+        ]);
     }
     sourceFile.saveSync();
     return {
@@ -92,111 +121,182 @@ toolExportRouters.forEach((router) => {
 });
 toolsTsSourceFile.saveSync();
 
-// 处理成 tree 与 tools/router.ts 里的导出 toolRouter 进行合并
-const toolRouterTsPath = join(toolsPath, 'generate-router.ts');
-const toolRouterTsSourceFile = project.createSourceFile(toolRouterTsPath, '', { overwrite: true });
-// 获取 tools/router.ts 里的变量 toolRouter
-let toolRouter = toolRouterTsSourceFile.getVariableDeclaration('GenerateRouter');
-if (!toolRouter) {
-    toolRouterTsSourceFile.addVariableStatement({
-        declarationKind: ts.VariableDeclarationKind.Const,
-        declarations: [
-            {
-                name: 'GenerateRouter',
-                initializer: '{}',
-            },
-        ],
-    });
-    toolRouter = toolRouterTsSourceFile.getVariableDeclaration('GenerateRouter')!;
-    // 将 toolRouter 添加到导出
-    toolRouterTsSourceFile.addExportDeclaration({
-        namedExports: ['GenerateRouter'],
-    });
-}
-
 declare type Router = {
     id: string;
     name: string;
     url: string;
+    filePath: string;
     children: Router[];
 };
-const tree: Router[] = [];
-// 生成 tree，路径
-toolExportRouters.forEach(({ router, exportName }) => {
-    const paths = router.replace(/^\//, '').replace(/\/$/, '').split('/');
-    let currentTree = tree;
-    paths.forEach((path, index) => {
-        const findIndex = currentTree.findIndex((item) => item.name === path);
-        if (findIndex === -1) {
-            const newTree: Router = {
-                id: exportName,
-                name: path,
-                url: `/${paths.slice(0, index + 1).join('/')}`,
-                children: [],
-            };
-            currentTree.push(newTree);
-            currentTree = newTree.children;
-        } else {
-            currentTree = currentTree[findIndex]!.children;
-        }
+const tree = (() => {
+    const tree: Router[] = [];
+    // 生成 tree，路径
+    toolExportRouters.forEach(({ router, exportName, filePath }) => {
+        const paths = router.replace(/^\//, '').replace(/\/$/, '').split('/');
+        let currentTree = tree;
+        paths.forEach((path, index) => {
+            const findIndex = currentTree.findIndex((item) => item.name === path);
+            if (findIndex === -1) {
+                const newTree: Router = {
+                    id: exportName,
+                    name: path,
+                    url: `/${paths.slice(0, index + 1).join('/')}`,
+                    filePath: filePath,
+                    children: [],
+                };
+                currentTree.push(newTree);
+                currentTree = newTree.children;
+            } else {
+                currentTree = currentTree[findIndex]!.children;
+            }
+        });
     });
-});
-// 将 tree 替换到 toolRouter
-toolRouter.setInitializer(JSON.stringify(tree, null, 4));
-toolRouterTsSourceFile.saveSync();
+
+    return tree;
+})();
+
+const treeNodes = (() => {
+    const importNodes: string[] = [];
+
+    function buildRouterStatement(router: Router): ts.ts.ObjectLiteralExpression {
+        // 因为要增加一个 component 的属性，所以要使用 ts.createNode
+        const children = router.children.map((child) => buildRouterStatement(child));
+
+        importNodes.push(router.id);
+
+        return factory.createObjectLiteralExpression(
+            [
+                factory.createPropertyAssignment(factory.createIdentifier('id'), factory.createStringLiteral(router.id)),
+                factory.createPropertyAssignment(factory.createIdentifier('name'), factory.createStringLiteral(router.name)),
+                factory.createPropertyAssignment(factory.createIdentifier('url'), factory.createStringLiteral(router.url)),
+                factory.createPropertyAssignment(factory.createIdentifier('component'), factory.createIdentifier(router.id)),
+                factory.createPropertyAssignment(factory.createIdentifier('children'), factory.createArrayLiteralExpression(children)),
+            ],
+            true,
+        );
+    }
+
+    const routerStatement = tree.map((router) => buildRouterStatement(router));
+    const routerExportStatement = factory.createVariableStatement(
+        [factory.createToken(ts.SyntaxKind.ExportKeyword)],
+        factory.createVariableDeclarationList(
+            [
+                factory.createVariableDeclaration(
+                    factory.createIdentifier('toolRouter'),
+                    undefined,
+                    factory.createTypeReferenceNode(factory.createIdentifier('IToolRouterArray'), undefined),
+                    factory.createArrayLiteralExpression(routerStatement, true),
+                ),
+            ],
+            ts.NodeFlags.Const,
+        ),
+    );
+    return { importNodes, routerExportStatement };
+})();
+
+const toolRouterTsPath = join(toolsPath, 'router.ts');
+
+if (fileSystem.fileExistsSync(toolRouterTsPath)) {
+    fileSystem.deleteSync(toolRouterTsPath);
+}
+
+const toolRouterTsContent = (() => {
+    const file = ts.ts.createSourceFile(toolsTsSourceFile.getFilePath(), '', ScriptTarget.ES2018);
+    const printer = ts.ts.createPrinter();
+
+    const importNodesSet = new Set(treeNodes.importNodes);
+    const importNodesArray = Array.from(importNodesSet);
+
+    const nodeArray = [
+        factory.createImportDeclaration(
+            undefined,
+            factory.createImportClause(
+                true,
+                undefined,
+                factory.createNamedImports([factory.createImportSpecifier(false, undefined, factory.createIdentifier('IToolRouterArray'))]),
+            ),
+            factory.createStringLiteral('./types'),
+            undefined,
+        ),
+        factory.createImportDeclaration(
+            undefined,
+            factory.createImportClause(
+                false,
+                undefined,
+                factory.createNamedImports(
+                    importNodesArray.map((importNode) =>
+                        factory.createImportSpecifier(false, undefined, factory.createIdentifier(importNode)),
+                    ),
+                ),
+            ),
+            factory.createStringLiteral('./tools'),
+            undefined,
+        ),
+        treeNodes.routerExportStatement,
+    ];
+
+    return printer.printList(ts.ts.ListFormat.MultiLine, ts.ts.factory.createNodeArray(nodeArray, true), file);
+})();
+
+fileSystem.writeFileSync(toolRouterTsPath, toolRouterTsContent);
 
 // 清空 toolPagePath 下的所有文件
 fileSystem.deleteSync(toolPagePath);
 
-const pageTemplate = (exportName: string, filePath: string) => {
-    // 将 filePath (encode-decode/base64/image.tool.tsx) encode-decode/base64/page.tsx
-    let baseFilePath = `${filePath.replace(/\.tool\.tsx$/, '')}`;
-    baseFilePath = baseFilePath.replace(/\/index$/, '');
-    baseFilePath = baseFilePath + '/page.tsx';
-    const fullFilePath = join(toolPagePath, baseFilePath);
-    console.log('Generate Tool Page => ', baseFilePath);
+// 生成具体页面
+(() => {
+    const pageTemplate = (exportName: string, filePath: string) => {
+        // 将 filePath (encode-decode/base64/image.tool.tsx) encode-decode/base64/page.tsx
+        let baseFilePath = `${filePath.replace(/\.tool\.tsx$/, '')}`;
+        baseFilePath = baseFilePath.replace(/\/index$/, '');
+        baseFilePath = baseFilePath + '/page.tsx';
+        const fullFilePath = join(toolPagePath, baseFilePath);
+        console.log('Generate Tool Page => ', baseFilePath);
 
-    return project.createSourceFile(
-        fullFilePath,
-        `import { ${exportName} } from '@/tools';
+        return project.createSourceFile(
+            fullFilePath,
+            `import { ${exportName} } from '@/tools';
 
 export default function ${exportName}Page(){
     return <${exportName} />
 }
         `,
-        { overwrite: true },
-    );
-};
+            { overwrite: true },
+        );
+    };
 
-toolExportRouters.forEach(({ exportName, filePath }) => {
-    pageTemplate(exportName, filePath).saveSync();
-});
+    toolExportRouters.forEach(({ exportName, filePath }) => {
+        pageTemplate(exportName, filePath).saveSync();
+    });
+})();
 
-// 使用 tree 为存在 children 的路由生成索引页面 page.tsx
-const generatePage = (router: Router) => {
-    if (router.children.length === 0) {
-        return;
-    }
-    const filePath = join(router.url, '/page.tsx');
-    const fullFilePath = join(toolPagePath, filePath);
-    console.log('Generate Tool Page => ', filePath);
-    const sourceFile = project.createSourceFile(
-        fullFilePath,
-        `import { ToolIndexPage } from '@/tools';
+// 生成索引页面
+(() => {
+    const generatePage = (router: Router) => {
+        if (router.children.length === 0) {
+            return;
+        }
+        const filePath = join(router.url, '/page.tsx');
+        const fullFilePath = join(toolPagePath, filePath);
+        console.log('Generate Tool Page => ', filePath);
+        const sourceFile = project.createSourceFile(
+            fullFilePath,
+            `import { ToolIndexPage } from '@/tools';
 
 export default function ${router.id.replace('Tool', 'IndexPage')}(){
     return <ToolIndexPage url="${router.url}" />
 }
         `,
-        { overwrite: true },
-    );
-    router.children.forEach((child) => {
-        generatePage(child);
-    });
-    sourceFile.saveSync();
-    return sourceFile;
-};
+            { overwrite: true },
+        );
+        router.children.forEach((child) => {
+            generatePage(child);
+        });
+        sourceFile.saveSync();
+        return sourceFile;
+    };
 
-tree.forEach((router) => {
-    generatePage(router);
-});
+    tree.forEach((router) => {
+        generatePage(router);
+    });
+})();

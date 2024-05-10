@@ -3,3 +3,5 @@
 export function EncodeDecodeUnicodeTool() {
     return <div>unicode tool</div>;
 }
+
+EncodeDecodeUnicodeTool.metadata = {};

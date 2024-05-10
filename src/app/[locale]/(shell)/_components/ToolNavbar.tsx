@@ -1,12 +1,13 @@
 import { AppShell, Burger, Input, NavLink, ScrollArea, Stack } from '@mantine/core';
+import { get } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { Logo } from '@/components/Logo';
 import { usePathname } from '@/i18n';
 import { toolRouter } from '@/tools';
-import type { Router } from '@/tools/router.utils';
+import { type IToolRouter } from '@/tools/types';
 
-function RenderRouter({ router, level }: { router: Router; level: number }) {
+function RenderRouter({ router, level }: { router: IToolRouter; level: number }) {
     const pathname = usePathname();
 
     // 确保所有父和子都是打开的
@@ -40,8 +41,12 @@ function RenderRouter({ router, level }: { router: Router; level: number }) {
         });
     }, [router.children]);
 
+    const metadata = useMemo(() => get(router, 'component.metadata', {}) as Record<string, never>, [router]);
+
     if (renderChildren.length === 0) {
-        return <NavLink active={pathname === router.url} key={router.id} href={router.url} label={router.name} leftSection={router.icon} />;
+        return (
+            <NavLink active={pathname === router.url} key={router.id} href={router.url} label={router.name} leftSection={metadata?.icon} />
+        );
     }
 
     return (
@@ -49,7 +54,7 @@ function RenderRouter({ router, level }: { router: Router; level: number }) {
             key={router.id}
             href={router.url}
             label={router.name}
-            leftSection={router.icon}
+            leftSection={metadata?.icon}
             childrenOffset={16}
             defaultOpened={defaultOpened}
         >
