@@ -41,7 +41,7 @@ function RenderRouter({ router, level }: { router: IToolRouter; level: number })
         });
     }, [router.children]);
 
-    const metadata = useMemo(() => get(router, 'component.metadata', {}) as Record<string, never>, [router]);
+    const metadata = useMemo(() => get(router, 'metadata', {}) as Record<string, never>, [router]);
 
     if (renderChildren.length === 0) {
         return (

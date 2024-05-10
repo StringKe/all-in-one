@@ -169,7 +169,10 @@ const treeNodes = (() => {
                 factory.createPropertyAssignment(factory.createIdentifier('id'), factory.createStringLiteral(router.id)),
                 factory.createPropertyAssignment(factory.createIdentifier('name'), factory.createStringLiteral(router.name)),
                 factory.createPropertyAssignment(factory.createIdentifier('url'), factory.createStringLiteral(router.url)),
-                factory.createPropertyAssignment(factory.createIdentifier('component'), factory.createIdentifier(router.id)),
+                factory.createPropertyAssignment(
+                    factory.createIdentifier('metadata'),
+                    factory.createPropertyAccessExpression(factory.createIdentifier(router.id), factory.createIdentifier('metadata')),
+                ),
                 factory.createPropertyAssignment(factory.createIdentifier('children'), factory.createArrayLiteralExpression(children)),
             ],
             true,
