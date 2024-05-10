@@ -20,13 +20,18 @@ function RenderRouter({ router, level }: { router: Router; level: number }) {
         if (router.children.length === 0) {
             return false;
         }
+        if (router.url === pathname) {
+            return true;
+        }
         return router.children.some((child) => {
             if (child.url === pathname) {
                 return true;
             }
-            return child.children.some((child) => child.url === pathname);
+            return child.children.some((child) => {
+                return child.url === pathname;
+            });
         });
-    }, [pathname, router.children]);
+    }, [pathname, router.children, router.url]);
 
     // 对 children 进行排序，将拥有子路由的放在前面
     const renderChildren = useMemo(() => {
