@@ -3,13 +3,63 @@
 
 import { AppShell, Burger, Group, Input, NavLink, ScrollArea, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconGauge } from '@tabler/icons-react';
-import { type PropsWithChildren } from 'react';
+import { useMemo, type PropsWithChildren } from 'react';
 
 import { ColorSchemaToggle } from '@/components/ColorSchemaToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
+import { usePathname } from '@/i18n';
 import { toolRouter } from '@/tools';
+import { type Router } from '@/tools/router.utils';
+
+function RenderRouter({ router, level }: { router: Router; level: number }) {
+    const pathname = usePathname();
+
+    // 确保所有父和子都是打开的
+    const defaultOpened = useMemo(() => {
+        if (router.children.length === 0) {
+            return false;
+        }
+        return router.children.some((child) => {
+            if (child.url === pathname) {
+                return true;
+            }
+            return child.children.some((child) => child.url === pathname);
+        });
+    }, [pathname, router.children]);
+
+    // 对 children 进行排序，将拥有子路由的放在前面
+    const renderChildren = useMemo(() => {
+        return router.children.sort((a, b) => {
+            if (a.children.length === 0 && b.children.length > 0) {
+                return 1;
+            }
+            if (a.children.length > 0 && b.children.length === 0) {
+                return -1;
+            }
+            return 0;
+        });
+    }, [router.children]);
+
+    if (renderChildren.length === 0) {
+        return <NavLink active={pathname === router.url} key={router.id} href={router.url} label={router.name} leftSection={router.icon} />;
+    }
+
+    return (
+        <NavLink
+            key={router.id}
+            href={router.url}
+            label={router.name}
+            leftSection={router.icon}
+            childrenOffset={16}
+            defaultOpened={defaultOpened}
+        >
+            {renderChildren.map((child) => (
+                <RenderRouter key={child.id} router={child} level={level + 1} />
+            ))}
+        </NavLink>
+    );
+}
 
 export default function RootLayout({ children }: PropsWithChildren) {
     const [opened, { toggle }] = useDisclosure();
@@ -39,26 +89,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
                     <Input placeholder={'Search is simple...'} />
                 </AppShell.Section>
                 <AppShell.Section grow my='md' component={ScrollArea}>
-                    {Array(60)
-                        .fill(0)
-                        .map((_, index) => (
-                            <NavLink
-                                key={index}
-                                href='#required-for-focus'
-                                label='First parent link'
-                                leftSection={<IconGauge size={'1em'} />}
-                                childrenOffset={28}
-                                defaultOpened
-                            >
-                                <NavLink href='#required-for-focus' label='First child link' />
-                                <NavLink label='Second child link' href='#required-for-focus' />
-                                <NavLink label='Nested parent link' childrenOffset={28} href='#required-for-focus'>
-                                    <NavLink label='First child link' href='#required-for-focus' />
-                                    <NavLink label='Second child link' href='#required-for-focus' />
-                                    <NavLink label='Third child link' href='#required-for-focus' />
-                                </NavLink>
-                            </NavLink>
-                        ))}
+                    {toolRouter.map((router) => (
+                        <RenderRouter key={router.id} router={router} level={0} />
+                    ))}
                 </AppShell.Section>
             </AppShell.Navbar>
             <AppShell.Main>{children}</AppShell.Main>

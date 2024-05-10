@@ -146,13 +146,13 @@ toolRouter.setInitializer(JSON.stringify(tree, null, 4));
 toolRouterTsSourceFile.saveSync();
 
 // 清空 toolPagePath 下的所有文件
-fileSystem.globSync([`${toolPagePath}/**/*.tsx`]).forEach((filePath) => {
-    fileSystem.deleteSync(filePath);
-});
+fileSystem.deleteSync(toolPagePath);
 
 const pageTemplate = (exportName: string, filePath: string) => {
     // 将 filePath (encode-decode/base64/image.tool.tsx) encode-decode/base64/page.tsx
-    const baseFilePath = `${filePath.replace(/\.tool\.tsx$/, '')}/page.tsx`;
+    let baseFilePath = `${filePath.replace(/\.tool\.tsx$/, '')}`;
+    baseFilePath = baseFilePath.replace(/\/index$/, '');
+    baseFilePath = baseFilePath + '/page.tsx';
     const fullFilePath = join(toolPagePath, baseFilePath);
     console.log('Generate Tool Page => ', baseFilePath);
 
@@ -170,4 +170,33 @@ export default function ${exportName}Page(){
 
 toolExportRouters.forEach(({ exportName, filePath }) => {
     pageTemplate(exportName, filePath).saveSync();
+});
+
+// 使用 tree 为存在 children 的路由生成索引页面 page.tsx
+const generatePage = (router: Router) => {
+    if (router.children.length === 0) {
+        return;
+    }
+    const filePath = join(router.url, '/page.tsx');
+    const fullFilePath = join(toolPagePath, filePath);
+    console.log('Generate Tool Page => ', filePath);
+    const sourceFile = project.createSourceFile(
+        fullFilePath,
+        `import { ToolIndexPage } from '@/tools';
+
+export default function ${router.id.replace('Tool', 'IndexPage')}(){
+    return <ToolIndexPage url="${router.url}" />
+}
+        `,
+        { overwrite: true },
+    );
+    router.children.forEach((child) => {
+        generatePage(child);
+    });
+    sourceFile.saveSync();
+    return sourceFile;
+};
+
+tree.forEach((router) => {
+    generatePage(router);
 });
