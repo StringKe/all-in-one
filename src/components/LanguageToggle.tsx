@@ -1,7 +1,7 @@
 'use client';
 
-import { ActionIcon, Button, Group, Popover, Stack, type SelectProps } from '@mantine/core';
-import { IconCheck, IconLanguage } from '@tabler/icons-react';
+import { ActionIcon, Button, Popover, Stack } from '@mantine/core';
+import { IconLanguage } from '@tabler/icons-react';
 import { get } from 'lodash-es';
 import { useLocale } from 'next-intl';
 import { type ReactNode } from 'react';
@@ -12,24 +12,6 @@ const icons: Record<string, ReactNode> = {
     en: <span className='fi fi-us' />,
     zh: <span className='fi fi-cn' />,
 };
-
-const renderSelectOption: SelectProps['renderOption'] = ({ option, checked }) => (
-    <Group flex='1' gap='xs'>
-        {icons[option.value]}
-        {option.label}
-        {checked && (
-            <IconCheck
-                style={{ marginInlineStart: 'auto' }}
-                {...{
-                    stroke: 1.5,
-                    color: 'currentColor',
-                    opacity: 0.6,
-                    size: 18,
-                }}
-            />
-        )}
-    </Group>
-);
 
 export function LanguageToggle() {
     const locale = useLocale();
