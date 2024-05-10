@@ -1,6 +1,6 @@
 import { ToolIndexPage } from '@/tools';
 
-export default function EncodeDecodeUnicodeIndexPage(){
+export default function EncodeDecodeMetadata(){
     return <ToolIndexPage url="/encode-decode" />
 }
         

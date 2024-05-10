@@ -1,47 +1,54 @@
-import { EncodeDecodeBase64ImageTool, EncodeDecodeBase64TextTool, EncodeDecodeUnicodeTool, EncodeDecodeUrlTool } from './tools';
+import {
+    EncodeDecodeBase64ImageTool,
+    EncodeDecodeBase64Metadata,
+    EncodeDecodeBase64TextTool,
+    EncodeDecodeMetadata,
+    EncodeDecodeUnicodeTool,
+    EncodeDecodeUrlTool,
+} from './tools';
 import type { IToolRouterArray } from './types';
 
 export const toolRouter: IToolRouterArray = [
     {
-        id: 'EncodeDecodeUnicodeTool',
-        name: 'encode-decode',
+        id: 'EncodeDecodeMetadataIndex',
+        name: '/encode-decode',
         url: '/encode-decode',
-        metadata: EncodeDecodeUnicodeTool.metadata,
+        metadata: EncodeDecodeMetadata,
         children: [
             {
-                id: 'EncodeDecodeUnicodeTool',
-                name: 'unicode',
-                url: '/encode-decode/unicode',
-                metadata: EncodeDecodeUnicodeTool.metadata,
+                id: 'EncodeDecodeUrlTool',
+                name: '/encode-decode/url',
+                url: '/encode-decode/url',
+                metadata: EncodeDecodeUrlTool.metadata,
                 children: [],
             },
             {
-                id: 'EncodeDecodeBase64ImageTool',
-                name: 'base64',
+                id: 'EncodeDecodeBase64MetadataIndex',
+                name: '/encode-decode/base64',
                 url: '/encode-decode/base64',
-                metadata: EncodeDecodeBase64ImageTool.metadata,
+                metadata: EncodeDecodeBase64Metadata,
                 children: [
                     {
-                        id: 'EncodeDecodeBase64ImageTool',
-                        name: 'image',
-                        url: '/encode-decode/base64/image',
-                        metadata: EncodeDecodeBase64ImageTool.metadata,
+                        id: 'EncodeDecodeBase64TextTool',
+                        name: '/encode-decode/base64/text',
+                        url: '/encode-decode/base64/text',
+                        metadata: EncodeDecodeBase64TextTool.metadata,
                         children: [],
                     },
                     {
-                        id: 'EncodeDecodeBase64TextTool',
-                        name: 'text',
-                        url: '/encode-decode/base64/text',
-                        metadata: EncodeDecodeBase64TextTool.metadata,
+                        id: 'EncodeDecodeBase64ImageTool',
+                        name: '/encode-decode/base64/image',
+                        url: '/encode-decode/base64/image',
+                        metadata: EncodeDecodeBase64ImageTool.metadata,
                         children: [],
                     },
                 ],
             },
             {
-                id: 'EncodeDecodeUrlTool',
-                name: 'url',
-                url: '/encode-decode/url',
-                metadata: EncodeDecodeUrlTool.metadata,
+                id: 'EncodeDecodeUnicodeTool',
+                name: '/encode-decode/unicode',
+                url: '/encode-decode/unicode',
+                metadata: EncodeDecodeUnicodeTool.metadata,
                 children: [],
             },
         ],
