@@ -3,23 +3,19 @@
 import { ActionIcon, Button, Popover, Stack } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
 import { useTolgee } from '@tolgee/react';
-import { get } from 'lodash-es';
-import { useTransition, type ReactNode } from 'react';
+import { useTransition } from 'react';
 
+import languages from '@/i18n/languages.json';
 import { usePathname, useRouter } from '@/navigation';
-import { ALL_LOCALES, localesTranslations } from '@/tolgee/shared';
-
-const icons: Record<string, ReactNode> = {
-    en: <span className='fi fi-us' />,
-    zh: <span className='fi fi-cn' />,
-};
 
 export function LanguageToggle() {
     const tolgee = useTolgee(['language']);
     const locale = tolgee.getLanguage();
+
     const router = useRouter();
     const pathname = usePathname();
-    const [isPending, startTransition] = useTransition();
+
+    const [_, startTransition] = useTransition();
 
     function onSelectChange(newLocale: string) {
         startTransition(() => {
@@ -35,20 +31,18 @@ export function LanguageToggle() {
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown>
-                <Stack gap={'xs'}>
-                    {ALL_LOCALES.map((value) => (
+                <Stack gap={'xs'} w={'240px'}>
+                    {languages.map((value) => (
                         <Button
-                            key={value}
+                            key={value.tag}
                             variant={'light'}
-                            color={locale === value ? 'blue' : 'gray'}
-                            sx={() => ({
-                                width: '164px',
-                            })}
-                            leftSection={icons[value]}
+                            color={locale === value.tag ? 'blue' : 'gray'}
+                            leftSection={value.flag}
                             justify='space-between'
-                            onClick={() => onSelectChange(value)}
+                            onClick={() => onSelectChange(value.tag)}
+                            fullWidth
                         >
-                            {get(localesTranslations, value, value.toUpperCase())}
+                            {value.originalName}
                         </Button>
                     ))}
                 </Stack>

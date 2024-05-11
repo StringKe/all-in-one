@@ -32,6 +32,7 @@ export function Search() {
             radius='md'
             limit={7}
             nothingFound='Nothing found...'
+            triggerOnContentEditable={false}
             searchProps={{
                 leftSection: <IconSearch style={{ width: rem(20), height: rem(20) }} />,
                 placeholder: 'Search documentation...',

@@ -1,12 +1,12 @@
 {
-    "add-item-add-button": "Add",
-    "add-item-input-placeholder": "New list item",
-    "app-title": "What To Pack",
-    "delete-item-button": "Delete",
-    "menu-item-translation-methods": "Translation methods",
-    "send-via-email": "Send via e-mail",
-    "share-button": "Share",
-    "this_is_a_key": "This is a key",
-    "this_is_a_key_with_params": "This is key with params {key} {key2}",
-    "this_is_a_key_with_tags": "This is a key with tags <b>bold</b> <b><i>{key}</i></b>"
+    "convert": "转换",
+    "convert.charset": "文字编码",
+    "tool": {
+        "encode-decode": "编码解码"
+    },
+    "tool.encode-decode.base64": "Base64",
+    "tool.encode-decode.base64.binary": "二进制",
+    "tool.encode-decode.base64.image": "图片",
+    "tool.encode-decode.base64.text": "文本",
+    "tool.encode-decode.url": "Url"
 }
