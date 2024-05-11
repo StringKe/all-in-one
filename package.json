@@ -44,6 +44,7 @@
         "@tiptap/starter-kit": "^2.3.2",
         "@tolgee/format-icu": "^5.26.0",
         "@tolgee/react": "^5.26.0",
+        "@tolgee/web": "^5.26.0",
         "@trpc/client": "next",
         "@trpc/react-query": "next",
         "@trpc/server": "next",
