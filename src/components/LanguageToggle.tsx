@@ -15,7 +15,7 @@ export function LanguageToggle() {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [_, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
 
     function onSelectChange(newLocale: string) {
         startTransition(() => {

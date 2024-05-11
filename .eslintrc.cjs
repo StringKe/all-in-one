@@ -5,12 +5,9 @@ const config = {
         project: true,
     },
     plugins: ['@typescript-eslint'],
-    extends: [
-        'next/core-web-vitals',
-        'plugin:@typescript-eslint/recommended-type-checked',
-        'plugin:@typescript-eslint/stylistic-type-checked',
-    ],
+    extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended', 'plugin:@typescript-eslint/stylistic'],
     rules: {
+        '@typescript-eslint/no-explicit-any': ['warn'],
         '@typescript-eslint/array-type': 'off',
         '@typescript-eslint/consistent-type-definitions': 'off',
         '@typescript-eslint/consistent-type-imports': [

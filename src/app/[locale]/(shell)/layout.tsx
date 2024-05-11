@@ -40,7 +40,7 @@ export async function generateMetadata(_: Props, parent: ResolvingMetadata): Pro
 export default function RootLayout({ children }: PropsWithChildren) {
     return (
         <>
-            <ToolShell />
+            <ToolShell>{children}</ToolShell>
             <Search />
         </>
     );

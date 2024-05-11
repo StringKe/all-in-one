@@ -12,7 +12,7 @@ export const { getTolgee, getTranslate, T } = createServerInstance({
                 fullKeyEncode: true,
             },
             language: locale,
-            fetch: async (input: any, init: any) => {
+            fetch: async (input, init) => {
                 return await fetch(input, { ...init, next: { revalidate: 0 } });
             },
         }),
