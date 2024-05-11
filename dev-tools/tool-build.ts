@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 import { camelCase } from 'lodash-es';
@@ -10,7 +11,7 @@ class ToolBuild {
     srcDir: string;
     toolPagesDir: string;
     toolDir: string;
-    debug = true;
+    debug = !!process.env.TOOL_BUILD_DEBUG;
 
     constructor() {
         this.srcDir = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), '../src'));
