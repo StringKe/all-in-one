@@ -9,7 +9,7 @@ export const env = createEnv({
     server: {
         DATABASE_URL: z.string().url(),
         NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-        IRON_SESSION_PASSWORD: z.string().default('default-password'),
+        IRON_SESSION_PASSWORD: z.string().min(32),
     },
 
     /**
