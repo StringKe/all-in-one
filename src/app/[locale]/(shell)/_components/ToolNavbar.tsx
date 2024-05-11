@@ -1,5 +1,3 @@
-'use client';
-
 import { AppShell, Burger, ScrollArea, Stack } from '@mantine/core';
 
 import { Logo } from '@/components/Logo';

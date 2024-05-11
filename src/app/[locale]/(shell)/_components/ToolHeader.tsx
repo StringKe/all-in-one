@@ -1,5 +1,3 @@
-'use client';
-
 import { AppShell, Burger, Group } from '@mantine/core';
 
 import { ColorSchemaToggle } from '@/components/ColorSchemaToggle';
