@@ -17,8 +17,8 @@ export const env = createEnv({
      * `NEXT_PUBLIC_`.
      */
     client: {
-        NEXT_PUBLIC_TOLGEE_API_KEY: z.string().min(1),
-        NEXT_PUBLIC_TOLGEE_API_URL: z.string().url(),
+        NEXT_PUBLIC_TOLGEE_API_KEY: z.string().optional(),
+        NEXT_PUBLIC_TOLGEE_API_URL: z.string().optional(),
     },
 
     /**
