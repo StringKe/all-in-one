@@ -39,6 +39,7 @@
         "@tiptap/extension-link": "^2.3.2",
         "@tiptap/react": "^2.3.2",
         "@tiptap/starter-kit": "^2.3.2",
+        "@tolgee/react": "^5.26.0",
         "@trpc/client": "next",
         "@trpc/react-query": "next",
         "@trpc/server": "next",
@@ -79,7 +80,6 @@
         "prettier": "^3.2.5",
         "prettier-plugin-tailwindcss": "^0.5.14",
         "prisma": "^5.10.2",
-        "ts-morph": "^22.0.0",
         "typescript": "^5.4.2"
     },
     "ct3aMetadata": {

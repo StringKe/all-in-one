@@ -14,9 +14,9 @@ export function Search() {
 
     const actions: SpotlightActionData[] = useMemo(() => {
         return flatRouters.map((router) => ({
-            id: router.id,
-            label: router.name,
-            description: router.url,
+            id: router.url,
+            label: router.title,
+            description: router.description,
             keywords: router.url.split(' '),
         }));
     }, [flatRouters]);

@@ -15,14 +15,16 @@ export function SearchControl({ ...others }: SearchControlProps) {
                 borderRadius: theme.radius.md,
                 color: 'var(--mantine-color-placeholder)',
                 transition: 'all 230ms ease-in-out',
-                willChange: 'border-color, background-color, color',
+                willChange: 'border-color, background-color, color, box-shadow',
 
                 '&:hover': {
                     [helper.light]: {
+                        boxShadow: theme.shadows.xs,
                         borderColor: theme.colors.gray[4],
                         backgroundColor: theme.white,
                     },
                     [helper.dark]: {
+                        boxShadow: theme.shadows.xs,
                         borderColor: theme.colors.dark[5],
                         backgroundColor: theme.colors.dark[7],
                     },
