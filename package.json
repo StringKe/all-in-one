@@ -52,7 +52,7 @@
         "clsx": "^2.1.1",
         "dayjs": "^1.11.11",
         "embla-carousel-react": "^8.0.4",
-        "flag-icons": "^7.2.1",
+        "iron-session": "^8.0.1",
         "lodash-es": "^4.17.21",
         "merge-anything": "^5.1.7",
         "next": "^14.2.1",

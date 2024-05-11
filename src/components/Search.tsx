@@ -3,23 +3,25 @@
 import { rem } from '@mantine/core';
 import { createSpotlight, Spotlight, type SpotlightActionData } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
+import { useTranslate } from '@tolgee/react';
 import { useMemo } from 'react';
 
-import { getFlatRouter } from '@/tools';
+import { getFlatRouter, getRouterKeywords } from '@/tools';
 
 export const [searchStore, searchHandlers] = createSpotlight();
 
 export function Search() {
+    const { t } = useTranslate();
     const flatRouters = useMemo(() => getFlatRouter(), []);
 
     const actions: SpotlightActionData[] = useMemo(() => {
         return flatRouters.map((router) => ({
             id: router.url,
-            label: router.title,
-            description: router.description,
-            keywords: router.url.split(' '),
+            label: t(router.title),
+            description: t(router.description),
+            keywords: getRouterKeywords(router.url),
         }));
-    }, [flatRouters]);
+    }, [flatRouters, t]);
 
     return (
         <Spotlight

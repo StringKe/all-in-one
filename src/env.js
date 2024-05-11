@@ -9,6 +9,7 @@ export const env = createEnv({
     server: {
         DATABASE_URL: z.string().url(),
         NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+        IRON_SESSION_PASSWORD: z.string().default('default-password'),
     },
 
     /**
@@ -26,6 +27,7 @@ export const env = createEnv({
      * middlewares) or client-side so we need to destruct manually.
      */
     runtimeEnv: {
+        IRON_SESSION_PASSWORD: process.env.IRON_SESSION_PASSWORD,
         DATABASE_URL: process.env.DATABASE_URL,
         NODE_ENV: process.env.NODE_ENV,
         NEXT_PUBLIC_TOLGEE_API_KEY: process.env.NEXT_PUBLIC_TOLGEE_API_KEY,

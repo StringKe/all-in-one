@@ -1,13 +1,16 @@
 'use client';
 
-import { AppShell } from '@mantine/core';
+import { AppShell, Container } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { type PropsWithChildren } from 'react';
+
+import { api } from '@/trpc/react';
 
 import { ToolHeader } from './ToolHeader';
 import { ToolNavbar } from './ToolNavbar';
 
 export function ToolShell({ children }: PropsWithChildren) {
+    const { data: isFull } = api.config.isContainer.useQuery();
     const [opened, { toggle }] = useDisclosure();
 
     return (
@@ -19,7 +22,10 @@ export function ToolShell({ children }: PropsWithChildren) {
         >
             <ToolHeader opened={opened} toggle={toggle} />
             <ToolNavbar opened={opened} toggle={toggle} />
-            <AppShell.Main>{children}</AppShell.Main>
+            <AppShell.Main>
+                {isFull && children}
+                {!isFull && <Container>{children}</Container>}
+            </AppShell.Main>
         </AppShell>
     );
 }

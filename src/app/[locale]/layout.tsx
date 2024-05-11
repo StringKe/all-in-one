@@ -10,7 +10,6 @@ import '@mantine/dropzone/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/nprogress/styles.css';
-import 'flag-icons/css/flag-icons.min.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { emotionTransform, MantineEmotionProvider } from '@mantine/emotion';
@@ -23,6 +22,7 @@ import { RootStyleRegistry } from '@/components/EmotionRootStyleRegistry';
 import theme from '@/lib/theme';
 import { TolgeeNextProvider } from '@/tolgee/client';
 import { ALL_LOCALES, DEFAULT_LOCALE, getStaticData } from '@/tolgee/shared';
+import { TRPCReactProvider } from '@/trpc/react';
 
 export const metadata: Metadata = {
     title: {
@@ -65,24 +65,26 @@ export default async function LocaleLayout({
                 <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no' />
             </head>
             <body>
-                <TolgeeNextProvider locale={locale} locales={locales}>
-                    <RootStyleRegistry>
-                        <MantineEmotionProvider>
-                            <MantineProvider
-                                defaultColorScheme={'auto'}
-                                theme={theme}
-                                stylesTransform={emotionTransform}
-                                classNamesPrefix={'app'}
-                                withCssVariables={true}
-                                withGlobalClasses={true}
-                                withStaticClasses={false}
-                                deduplicateCssVariables={true}
-                            >
-                                {children}
-                            </MantineProvider>
-                        </MantineEmotionProvider>
-                    </RootStyleRegistry>
-                </TolgeeNextProvider>
+                <TRPCReactProvider>
+                    <TolgeeNextProvider locale={locale} locales={locales}>
+                        <RootStyleRegistry>
+                            <MantineEmotionProvider>
+                                <MantineProvider
+                                    defaultColorScheme={'auto'}
+                                    theme={theme}
+                                    stylesTransform={emotionTransform}
+                                    classNamesPrefix={'app'}
+                                    withCssVariables={true}
+                                    withGlobalClasses={true}
+                                    withStaticClasses={false}
+                                    deduplicateCssVariables={true}
+                                >
+                                    {children}
+                                </MantineProvider>
+                            </MantineEmotionProvider>
+                        </RootStyleRegistry>
+                    </TolgeeNextProvider>
+                </TRPCReactProvider>
                 <GoogleAnalytics gaId='G-79DHRNM73Y' />
             </body>
         </html>

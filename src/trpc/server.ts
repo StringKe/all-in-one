@@ -1,21 +1,28 @@
 import 'server-only';
 
-import { headers } from 'next/headers';
+import { getIronSession } from 'iron-session';
+import { cookies, headers } from 'next/headers';
 import { cache } from 'react';
 
+import { env } from '@/env';
 import { createCaller } from '@/server/api/root';
-import { createTRPCContext } from '@/server/api/trpc';
+import { createTRPCContext, type SessionObject } from '@/server/api/trpc';
 
-/**
- * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
- * handling a tRPC call from a React Server Component.
- */
-const createContext = cache(() => {
-    const heads = new Headers(headers());
-    heads.set('x-trpc-source', 'rsc');
+const createContext = cache(async () => {
+    const _headers = new Headers(headers());
+    const _cookies = cookies();
+    const _session = await getIronSession<SessionObject>(_cookies, {
+        password: env.IRON_SESSION_PASSWORD,
+        cookieName: 'session',
+    });
+
+    _headers.set('x-trpc-source', 'rsc');
 
     return createTRPCContext({
-        headers: heads,
+        isRSC: true,
+        headers: _headers,
+        cookies: _cookies,
+        session: _session,
     });
 });
 

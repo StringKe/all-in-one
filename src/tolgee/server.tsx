@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { createServerInstance } from '@tolgee/react/server';
 import { useLocale } from 'next-intl';
 

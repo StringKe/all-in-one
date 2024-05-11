@@ -1,26 +1,33 @@
+import 'server-only';
+
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
+import { getIronSession } from 'iron-session';
+import { cookies, headers } from 'next/headers';
 import { type NextRequest } from 'next/server';
 
 import { env } from '@/env';
 import { appRouter } from '@/server/api/root';
-import { createTRPCContext } from '@/server/api/trpc';
+import { createTRPCContext, type SessionObject } from '@/server/api/trpc';
 
-/**
- * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
- * handling a HTTP request (e.g. when you make requests from Client Components).
- */
-const createContext = async (req: NextRequest) => {
-    return createTRPCContext({
-        headers: req.headers,
+const handler = async (req: NextRequest) => {
+    const _cookies = cookies();
+    const _headers = new Headers(headers());
+    const _session = await getIronSession<SessionObject>(_cookies, {
+        password: env.IRON_SESSION_PASSWORD,
+        cookieName: 'session',
     });
-};
 
-const handler = (req: NextRequest) =>
-    fetchRequestHandler({
+    const response = await fetchRequestHandler({
         endpoint: '/api/trpc',
         req,
         router: appRouter,
-        createContext: () => createContext(req),
+        createContext: () =>
+            createTRPCContext({
+                isRSC: false,
+                headers: _headers,
+                cookies: _cookies,
+                session: _session,
+            }),
         onError:
             env.NODE_ENV === 'development'
                 ? ({ path, error }) => {
@@ -28,5 +35,10 @@ const handler = (req: NextRequest) =>
                   }
                 : undefined,
     });
+
+    await _session.save();
+
+    return response;
+};
 
 export { handler as GET, handler as POST };
