@@ -11,6 +11,20 @@ export function buildToolMetadata(url: string) {
     };
 }
 
+export function getRouterKeywords(url: string) {
+    // 从 url 往上查找所有的 router 提取 keywords
+    const keywords = new Set<string>();
+    eachRouter(toolRouters, (router) => {
+        if (router.url === url) {
+            router.keywords?.forEach((keyword) => keywords.add(keyword));
+        }
+        if (url.startsWith(router.url)) {
+            router.keywords?.forEach((keyword) => keywords.add(keyword));
+        }
+    });
+    return Array.from(keywords);
+}
+
 export function findRouter(url: string) {
     let result: IToolRouter | undefined;
     eachRouter(toolRouters, (router) => {

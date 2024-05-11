@@ -2,11 +2,12 @@
 
 import { ActionIcon, Button, Popover, Stack } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
+import { useTolgee } from '@tolgee/react';
 import { get } from 'lodash-es';
-import { useLocale } from 'next-intl';
-import { type ReactNode } from 'react';
+import { useTransition, type ReactNode } from 'react';
 
-import { locales, localesTranslations, usePathname, useRouter } from '@/i18n';
+import { usePathname, useRouter } from '@/navigation';
+import { ALL_LOCALES, localesTranslations } from '@/tolgee/shared';
 
 const icons: Record<string, ReactNode> = {
     en: <span className='fi fi-us' />,
@@ -14,13 +15,17 @@ const icons: Record<string, ReactNode> = {
 };
 
 export function LanguageToggle() {
-    const locale = useLocale();
+    const tolgee = useTolgee(['language']);
+    const locale = tolgee.getLanguage();
     const router = useRouter();
     const pathname = usePathname();
+    const [isPending, startTransition] = useTransition();
 
-    const onChange = (value: string | null) => {
-        router.replace(pathname, { locale: value ?? 'en' });
-    };
+    function onSelectChange(newLocale: string) {
+        startTransition(() => {
+            router.replace(pathname, { locale: newLocale });
+        });
+    }
 
     return (
         <Popover>
@@ -31,7 +36,7 @@ export function LanguageToggle() {
             </Popover.Target>
             <Popover.Dropdown>
                 <Stack gap={'xs'}>
-                    {locales.map((value) => (
+                    {ALL_LOCALES.map((value) => (
                         <Button
                             key={value}
                             variant={'light'}
@@ -41,7 +46,7 @@ export function LanguageToggle() {
                             })}
                             leftSection={icons[value]}
                             justify='space-between'
-                            onClick={() => onChange(value)}
+                            onClick={() => onSelectChange(value)}
                         >
                             {get(localesTranslations, value, value.toUpperCase())}
                         </Button>

@@ -1127,6 +1127,11 @@
   resolved "https://registry.yarnpkg.com/@tolgee/core/-/core-5.26.0.tgz#eb314b812f93a92e20d56cd84ef3fdf60352077e"
   integrity sha512-ND4lcyPpaVxMRRe+A0rWWfmizWj7tgcSyDi6EOAWLOz0giCaX4aMrlvm8LjKbQ5sVxhqVrKkdZTTdJR6laTjSw==
 
+"@tolgee/format-icu@^5.26.0":
+  version "5.26.0"
+  resolved "https://registry.yarnpkg.com/@tolgee/format-icu/-/format-icu-5.26.0.tgz#03bfda9de94a24de26e412674e9e62e9e2447942"
+  integrity sha512-wgUpDTo71SNZP/HAKb17HxIWUxFCWFgsAUUuojzrEautKxyaG0FTwJl384gohlFFtogzKowVkRqOq38mtOh3Zg==
+
 "@tolgee/react@^5.26.0":
   version "5.26.0"
   resolved "https://registry.yarnpkg.com/@tolgee/react/-/react-5.26.0.tgz#9785121c3123ae7f80df11b799d10de0f8370a13"

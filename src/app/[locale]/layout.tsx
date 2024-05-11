@@ -14,13 +14,14 @@ import 'flag-icons/css/flag-icons.min.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { emotionTransform, MantineEmotionProvider } from '@mantine/emotion';
-import { type Metadata } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { type PropsWithChildren } from 'react';
 
 import { RootStyleRegistry } from '@/components/EmotionRootStyleRegistry';
 import theme from '@/lib/theme';
+import { TolgeeNextProvider } from '@/tolgee/client';
+import { ALL_LOCALES, DEFAULT_LOCALE, getStaticData } from '@/tolgee/shared';
 
 export const metadata: Metadata = {
     title: {
@@ -44,13 +45,17 @@ export const metadata: Metadata = {
     keywords: ['all in one', 'tools', 'encode', 'decode', 'transform', 'image convert'],
 };
 
-export default async function RootLayout({
+export default async function LocaleLayout({
     children,
     params: { locale },
 }: PropsWithChildren<{
     params: { locale: string };
 }>) {
-    const messages = await getMessages();
+    if (!ALL_LOCALES.includes(locale)) {
+        notFound();
+    }
+
+    const locales = await getStaticData([DEFAULT_LOCALE, locale]);
 
     return (
         <html lang={locale}>
@@ -59,7 +64,7 @@ export default async function RootLayout({
                 <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no' />
             </head>
             <body>
-                <NextIntlClientProvider locale={locale} messages={messages}>
+                <TolgeeNextProvider locale={locale} locales={locales}>
                     <RootStyleRegistry>
                         <MantineEmotionProvider>
                             <MantineProvider
@@ -76,7 +81,7 @@ export default async function RootLayout({
                             </MantineProvider>
                         </MantineEmotionProvider>
                     </RootStyleRegistry>
-                </NextIntlClientProvider>
+                </TolgeeNextProvider>
             </body>
         </html>
     );

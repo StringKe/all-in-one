@@ -39,6 +39,7 @@
         "@tiptap/extension-link": "^2.3.2",
         "@tiptap/react": "^2.3.2",
         "@tiptap/starter-kit": "^2.3.2",
+        "@tolgee/format-icu": "^5.26.0",
         "@tolgee/react": "^5.26.0",
         "@trpc/client": "next",
         "@trpc/react-query": "next",

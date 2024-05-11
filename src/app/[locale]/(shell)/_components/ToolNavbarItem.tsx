@@ -1,8 +1,9 @@
 import { NavLink } from '@mantine/core';
+import { useTranslate } from '@tolgee/react';
 import { get } from 'lodash-es';
 import { useMemo } from 'react';
 
-import { usePathname } from '@/i18n';
+import { usePathname } from '@/navigation';
 import type { IToolRouter } from '@/tool';
 
 function isPathActive(router: IToolRouter, pathname: string): boolean {
@@ -16,6 +17,7 @@ function isPathActive(router: IToolRouter, pathname: string): boolean {
 }
 
 export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: number }) {
+    const { t } = useTranslate();
     const pathname = usePathname();
 
     const children = useMemo(() => router.children ?? [], [router.children]);
@@ -49,7 +51,7 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
                 active={pathname === router.url}
                 key={router.url}
                 href={router.url}
-                label={router.title}
+                label={t(router.title)}
                 leftSection={metadata?.icon}
             />
         );
@@ -60,7 +62,7 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
             active={pathname === router.url}
             key={router.url}
             href={router.url}
-            label={router.title}
+            label={t(router.title)}
             leftSection={metadata?.icon}
             childrenOffset={16}
             defaultOpened={defaultOpened}

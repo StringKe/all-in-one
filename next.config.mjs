@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import bundleAnalyzer from '@next/bundle-analyzer';
-import createNextIntlPlugin from 'next-intl/plugin';
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
@@ -53,6 +52,4 @@ const withBundleAnalyzer = bundleAnalyzer({
     enabled: process.env.ANALYZE === 'true',
 });
 
-const withNextIntl = createNextIntlPlugin();
-
-export default withNextIntl(withBundleAnalyzer(config));
+export default withBundleAnalyzer(config);
