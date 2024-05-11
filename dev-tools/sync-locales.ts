@@ -153,6 +153,7 @@ class SyncLocales {
                 name: language.name,
                 originalName: language.originalName,
                 tag: language.tag,
+                base: language.base,
             });
         }
 
