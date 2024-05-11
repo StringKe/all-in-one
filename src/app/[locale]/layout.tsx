@@ -14,6 +14,7 @@ import 'flag-icons/css/flag-icons.min.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { emotionTransform, MantineEmotionProvider } from '@mantine/emotion';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { type PropsWithChildren } from 'react';
@@ -82,6 +83,7 @@ export default async function LocaleLayout({
                         </MantineEmotionProvider>
                     </RootStyleRegistry>
                 </TolgeeNextProvider>
+                <GoogleAnalytics gaId='G-79DHRNM73Y' />
             </body>
         </html>
     );
