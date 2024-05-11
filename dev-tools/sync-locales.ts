@@ -139,7 +139,7 @@ class SyncLocales {
         await this.requestKeyInfo();
         await this.requestLanguages();
 
-        const json = [];
+        const json: any[] = [];
         for (const language of this.languages) {
             const response = await this.requestTranslation(language.tag);
             const translations = get(response.data, language.tag);
