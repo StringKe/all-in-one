@@ -43,3 +43,9 @@ yarn-error.log*
 *.tsbuildinfo
 
 .idea
+
+src/app/\[locale\]/(shell)/(tools)
+!src/app/\[locale\]/(shell)/(tools)/.gitkeep
+
+src/i18n
+!src/i18n/.gitkeep
