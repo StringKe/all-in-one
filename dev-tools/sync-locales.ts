@@ -43,15 +43,21 @@ class SyncLocales {
         this.i18nRoot = path.join(projectRoot, '../src/i18n');
         const envFile = path.join(projectRoot, '../.env');
         if (!fs.existsSync(envFile)) {
-            throw new Error(`.env file not found at ${envFile}`);
+            // 从环境变量中获取
+            if (!process.env.NEXT_PUBLIC_TOLGEE_API_KEY || !process.env.NEXT_PUBLIC_TOLGEE_API_URL) {
+                throw new Error(`Environment variables NEXT_PUBLIC_TOLGEE_API_KEY and NEXT_PUBLIC_TOLGEE_API_URL must be set`);
+            }
+            this.API_KEY = process.env.NEXT_PUBLIC_TOLGEE_API_KEY;
+            this.API_URL = process.env.NEXT_PUBLIC_TOLGEE_API_URL;
+        } else {
+            const envContent = fs.readFileSync(envFile, 'utf-8');
+            const env = parse(envContent);
+            if (!env.NEXT_PUBLIC_TOLGEE_API_KEY || !env.NEXT_PUBLIC_TOLGEE_API_URL) {
+                throw new Error(`.env file must contain NEXT_PUBLIC_TOLGEE_API_KEY and NEXT_PUBLIC_TOLGEE_API_URL variables`);
+            }
+            this.API_KEY = env.NEXT_PUBLIC_TOLGEE_API_KEY;
+            this.API_URL = env.NEXT_PUBLIC_TOLGEE_API_URL;
         }
-        const envContent = fs.readFileSync(envFile, 'utf-8');
-        const env = parse(envContent);
-        if (!env.NEXT_PUBLIC_TOLGEE_API_KEY || !env.NEXT_PUBLIC_TOLGEE_API_URL) {
-            throw new Error(`.env file must contain NEXT_PUBLIC_TOLGEE_API_KEY and NEXT_PUBLIC_TOLGEE_API_URL variables`);
-        }
-        this.API_KEY = env.NEXT_PUBLIC_TOLGEE_API_KEY;
-        this.API_URL = env.NEXT_PUBLIC_TOLGEE_API_URL;
 
         this.client = axios.create({
             baseURL: this.API_URL,
