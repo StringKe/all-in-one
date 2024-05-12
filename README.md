@@ -56,73 +56,63 @@ If you have a new tool you would like to add to this project, you can do so in t
 
 ## 4.2. Submit a pull request
 
-Follow the guidelines in 5.2.
+Follow the specifications in 5.2. Contribution Guidelines.
 
-# 5. Contributing
+# 5. Contribution
 
-## 5.1.
+## 5.1. Contributors
 
 -   [StringKe](https://github.com/StringKe)
 
-## 5.2. Contribution guidelines
+## 5.2. Contribution Guidelines
 
-Please make sure that your contribution conforms to the following specifications.
+please make sure your contribution meets the following specifications.
 
-## 5.2.1. Code Specifications
+### 5.2.1. Code specification
 
-This project has been configured with ESLint and Prettier, and you can check the code specification with the following
-command:
+this project has been configured with ESLint and Prettier, you can use the following commands to check the code
+specification:
 
 ```bash
 pnpm run lint
 pnpm prettier . --check
 ```
 
-``bash
-
+```bash
 # Fix code specification
-
 pnpm prettier . --write
-
 ```
 
-### 5.2.2. Commit specification
+### 5.2.2. Submission specification
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) to normalize commit messages. Please strictly adhere to the following specification:
+this project uses [Conventional Commits](https://www.conventionalcommits.org/) to standardize commit messages. Please
+strictly follow the following specifications:
 
-- `feat`: new feature
-- `fix`: fixes
-- `docs`: documentation changes
-- `style`: code formatting changes
-- `refactor`: Code refactoring
-- `perf`: Performance optimization
-- `test`: Testing
-- `build`: Build system or package dependency updates
-- `ci`: CI configuration
-- `chore`: Other changes
-- `revert`: Undo a commit
-- `release`: Release a new version
+-   `feat`: new feature
+-   `fix`: fix problem
+-   `docs`: documentation modification
+-   `style`: code format modification
+-   `refactor`: code refactoring
+-   `perf`: performance optimization
+-   `test`: test
+-   `build`: build system or package dependency update
+-   `ci`: CI configuration
+-   `chore`: other modifications
+-   `revert`: undo submission
+-   `release`: publish a new version
 
-The format of the commit message is as follows:
+The commit message format is as follows:
 
 ```
-
 <type>(<scope>): <subject>
-
 ```
 
-Example:
+For example:
 
 ```
-
 feat: add new tool
-
 ```
 
 # 6. License
 
-Comply with the GPL-3.0 license.
-
-
-Translated with DeepL.com (free version)
-```
+GPL-3.0 License.
