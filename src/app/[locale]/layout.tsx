@@ -10,6 +10,7 @@ import '@mantine/dropzone/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/nprogress/styles.css';
+import '@/styles.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { emotionTransform, MantineEmotionProvider } from '@mantine/emotion';
@@ -76,7 +77,7 @@ export default async function LocaleLayout({
                                     classNamesPrefix={'app'}
                                     withCssVariables={true}
                                     withGlobalClasses={true}
-                                    withStaticClasses={false}
+                                    withStaticClasses={true}
                                     deduplicateCssVariables={true}
                                 >
                                     {children}

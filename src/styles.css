@@ -1,0 +1,3 @@
+.full-height {
+    height: calc(100dvh - ((var(--app-shell-header-offset, 0rem) + var(--app-shell-padding)) + (calc(var(--app-shell-footer-offset, 0rem) + var(--app-shell-padding)))))
+}
