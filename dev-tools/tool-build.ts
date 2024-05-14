@@ -101,7 +101,7 @@ export default function ${componentName}Page() {
     }
 
     makeToolComponent(router: IToolRouter) {
-        const componentPath = path.join(this.buildPath(this.toolDir, router.url), 'index.tsx');
+        const componentPath = path.join(this.buildPath(this.toolDir, router.url), 'og-image.tsx');
         if (!fs.existsSync(componentPath) || this.debug) {
             fs.writeFileSync(
                 componentPath,

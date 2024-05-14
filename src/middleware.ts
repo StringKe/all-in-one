@@ -6,7 +6,7 @@ import { ALL_LOCALES, DEFAULT_LOCALE } from '@/tolgee/shared';
 const i18nMiddleware = createMiddleware({
     locales: ALL_LOCALES,
     defaultLocale: DEFAULT_LOCALE,
-    localePrefix: 'as-needed',
+    localePrefix: 'always',
 });
 
 export default async function middleware(request: NextRequest) {
@@ -15,5 +15,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|static|.*\\..*|_next|favicon.ico|robots.txt).*)'],
+    matcher: ['/((?!api|static|.*\\..*|_next|favicon.ico|robots.txt|opengraph-image|twitter-image).*)'],
 };

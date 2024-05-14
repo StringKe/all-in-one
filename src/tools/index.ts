@@ -35,6 +35,20 @@ export function findRouter(url: string) {
     return result;
 }
 
+export function findRouterParent(url: string) {
+    let result: IToolRouter | undefined;
+    eachRouter(toolRouters, (router) => {
+        if (router.children) {
+            router.children.forEach((child) => {
+                if (child.url === url) {
+                    result = router;
+                }
+            });
+        }
+    });
+    return result;
+}
+
 export function eachRouter(routers: IToolRouter[], callback: (router: IToolRouter) => void) {
     routers.forEach((router) => {
         callback(router);
