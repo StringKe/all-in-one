@@ -1,7 +1,7 @@
 import { NavLink } from '@mantine/core';
 import { useTranslate } from '@tolgee/react';
 import { get } from 'lodash-es';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { usePathname } from '@/navigation';
 import type { IToolRouter } from '@/tool';
@@ -16,6 +16,15 @@ function isPathActive(router: IToolRouter, pathname: string): boolean {
     return false;
 }
 
+function saveStateToLocalStorage(key: string, state: boolean) {
+    localStorage.setItem(key, JSON.stringify(state));
+}
+
+function getStateFromLocalStorage(key: string, defaultValue: boolean): boolean {
+    const state = localStorage.getItem(key);
+    return state ? JSON.parse(state) : defaultValue;
+}
+
 export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: number }) {
     const { t } = useTranslate();
     const pathname = usePathname();
@@ -26,6 +35,24 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
     const defaultOpened = useMemo(() => {
         return children.length > 0 && isPathActive(router, pathname);
     }, [children.length, pathname, router]);
+
+    const [isOpened, setIsOpened] = useState(() => {
+        return getStateFromLocalStorage(router.url, defaultOpened);
+    });
+
+    const onChange = (value: boolean) => {
+        setIsOpened(value);
+        // 需要将所有的子级别也关闭
+        if (!value) {
+            children.forEach((child) => {
+                saveStateToLocalStorage(child.url, false);
+            });
+        }
+    };
+
+    useEffect(() => {
+        saveStateToLocalStorage(router.url, isOpened);
+    }, [isOpened, router.url]);
 
     // 对 children 进行排序，将拥有子路由的放在前面
     const renderChildren = useMemo(() => {
@@ -65,7 +92,9 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
             label={t(router.title)}
             leftSection={metadata?.icon}
             childrenOffset={16}
-            defaultOpened={defaultOpened}
+            opened={isOpened}
+            defaultOpened={isOpened}
+            onChange={onChange}
         >
             {renderChildren.map((child) => (
                 <ToolNavbarItem key={child.url} router={child} level={level + 1} />
