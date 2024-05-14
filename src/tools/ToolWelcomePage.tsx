@@ -1,7 +1,8 @@
 import { Badge, Button, Group, SimpleGrid, Stack, Text } from '@mantine/core';
 
+import { Link } from '@/navigation';
 import { getTranslate } from '@/tolgee/server';
-import { findRouter, getAllSubTools } from '@/tools/index';
+import { findRouter, getAllSubTools } from '@/tools';
 
 export async function ToolWelcomePage({ url }: { url: string }) {
     const t = await getTranslate();
@@ -24,13 +25,20 @@ export async function ToolWelcomePage({ url }: { url: string }) {
                             {tool.parent && <Badge>{t(tool.parent.title)}</Badge>}
                         </Group>
 
-                        <Text size='sm' c='dimmed'>
+                        <Text size='sm' c='dimmed' h={'64px'}>
                             {t(tool.description)}
                         </Text>
 
-                        <Button color='blue' fullWidth mt='md' radius='md'>
-                            {t('try-it')}
-                        </Button>
+                        <Link
+                            href={tool.url}
+                            style={{
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <Button color='blue' fullWidth mt='md' radius='md'>
+                                {t('try-it')}
+                            </Button>
+                        </Link>
                     </Stack>
                 ))}
             </SimpleGrid>
