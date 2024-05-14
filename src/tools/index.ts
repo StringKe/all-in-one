@@ -54,3 +54,26 @@ export function getFlatRouter(skipGroup = true) {
     });
     return result;
 }
+
+export function getAllSubTools(parentUrl: string): (IToolRouter & {
+    parent?: IToolRouter;
+})[] {
+    const result: IToolRouter[] = [];
+    eachRouter(toolRouters, (router) => {
+        const notChildren = !router.children || router.children.length === 0;
+        if (router.url.startsWith(parentUrl) && notChildren) {
+            result.push(router);
+        }
+    });
+    return result.map((item) => {
+        // 找到当前路由的父级路由
+        const parent = findRouter(item.url.replace(/\/[^/]+$/, ''));
+        if (parent) {
+            return {
+                ...item,
+                parent,
+            };
+        }
+        return item;
+    });
+}
