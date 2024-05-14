@@ -1,3 +1,5 @@
+'use client';
+
 import { NavLink } from '@mantine/core';
 import { useTranslate } from '@tolgee/react';
 import { get } from 'lodash-es';
