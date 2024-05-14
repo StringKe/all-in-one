@@ -1,15 +1,20 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { ImageResponse } from 'next/og';
 
 import { getTranslate } from '@/tolgee/server';
 import { findRouter, findRouterParent } from '@/tools';
 
+let font: ArrayBuffer;
+
+async function getFont() {
+    if (!font) {
+        font = await fetch(new URL('./font.ttf', import.meta.url)).then((res) => res.arrayBuffer());
+    }
+    return font;
+}
+
 export async function getPageOgImage(locale: string) {
     const t = await getTranslate();
-    const font = await fs.promises.readFile(path.join(fileURLToPath(import.meta.url), '../', 'font.ttf'));
+    const font = await getFont();
 
     return new ImageResponse(
         (
@@ -93,7 +98,8 @@ export async function getToolOgImage(locale: string, url: string) {
     const parentRouter = findRouterParent(url);
 
     const t = await getTranslate();
-    const font = await fs.promises.readFile(path.join(fileURLToPath(import.meta.url), '../', 'font.ttf'));
+
+    const font = await getFont();
 
     return new ImageResponse(
         (
