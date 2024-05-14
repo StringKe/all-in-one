@@ -50,12 +50,12 @@ class ToolBuild {
         return fullPath;
     }
 
-    buildPagePath(router: IToolRouter) {
-        return path.join(this.buildPath(this.toolPagesDir, router.url), 'page.tsx');
+    buildPageTsxPath(router: IToolRouter, fileName = 'page.tsx') {
+        return path.join(this.buildPath(this.toolPagesDir, router.url), fileName);
     }
 
     makeIndexPage(router: IToolRouter) {
-        const pagePath = this.buildPagePath(router);
+        const pagePath = this.buildPageTsxPath(router);
         if (fs.existsSync(pagePath)) {
             fs.rmSync(pagePath);
         }
@@ -71,18 +71,11 @@ export default function ${this.name(router.url)}Metadata() {
         );
     }
 
-    relativePath(from: string, to: string) {
-        return path.relative(from, to);
-    }
-
     makeToolPage(router: IToolRouter) {
-        const pagePath = this.buildPagePath(router);
+        const pagePath = this.buildPageTsxPath(router);
         if (fs.existsSync(pagePath)) {
             fs.rmSync(pagePath);
         }
-
-        // const toolComponentPath = path.join(this.buildPath(this.toolDir, router.url), 'index');
-        // const toolPagePath = this.relativePath(path.dirname(pagePath), toolComponentPath);
 
         const toolPagePath = `@/tools/${router.url}/index`;
 
@@ -100,8 +93,60 @@ export default function ${componentName}Page() {
         );
     }
 
+    buildBaseOg(router: IToolRouter) {
+        const ogImagePath = this.buildPageTsxPath(router, 'og-image.tsx');
+        const twitterImagePath = this.buildPageTsxPath(router, 'twitter-image.tsx');
+
+        const ogAndTwitterImage = `import { getToolOgImage } from '@/lib/image/og-image';
+
+export const contentType = 'image/png';
+
+export default async function Image({
+    params: { locale },
+}: {
+    params: {
+        locale: string;
+    };
+}) {
+    return await getToolOgImage(locale, '${router.url}');
+}
+`;
+
+        const ogAltPath = this.buildPageTsxPath(router, 'og-image.alt.txt');
+        const twitterAltPath = this.buildPageTsxPath(router, 'twitter-image.alt.txt');
+
+        const altContent = router.url
+            .trim()
+            .split('/')
+            .filter(Boolean)
+            .map((item) => {
+                let text = camelCase(item);
+                text = text.replace(/^[a-z]/, (s) => s.toUpperCase());
+                return text;
+            })
+            .join(' ');
+
+        if (fs.existsSync(ogAltPath)) {
+            fs.rmSync(ogAltPath);
+        }
+        if (fs.existsSync(twitterAltPath)) {
+            fs.rmSync(twitterAltPath);
+        }
+        if (fs.existsSync(ogImagePath)) {
+            fs.rmSync(ogImagePath);
+        }
+        if (fs.existsSync(twitterImagePath)) {
+            fs.rmSync(twitterImagePath);
+        }
+
+        fs.writeFileSync(ogImagePath, ogAndTwitterImage);
+        fs.writeFileSync(twitterImagePath, ogAndTwitterImage);
+        fs.writeFileSync(ogAltPath, altContent);
+        fs.writeFileSync(twitterAltPath, altContent);
+    }
+
     makeToolComponent(router: IToolRouter) {
-        const componentPath = path.join(this.buildPath(this.toolDir, router.url), 'og-image.tsx');
+        const componentPath = path.join(this.buildPath(this.toolDir, router.url), 'index.tsx');
         if (!fs.existsSync(componentPath) || this.debug) {
             fs.writeFileSync(
                 componentPath,
@@ -122,6 +167,7 @@ export default function ${componentName}Page() {
                 this.makeToolComponent(router);
                 this.makeToolPage(router);
             }
+            this.buildBaseOg(router);
         });
     }
 }

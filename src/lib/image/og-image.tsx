@@ -142,20 +142,29 @@ export async function getToolOgImage(locale: string, url: string) {
                 <div
                     style={{
                         display: 'flex',
-                        flexWrap: 'wrap',
                         justifyContent: 'center',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        flexDirection: 'column',
                         padding: '20px 50px',
                         margin: '0 42px',
-                        fontSize: 40,
                         width: 'auto',
                         maxWidth: 800,
-                        textAlign: 'center',
                         backgroundColor: 'black',
-                        color: 'white',
-                        lineHeight: 1.4,
                     }}
                 >
-                    <div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            color: 'white',
+                            fontSize: 42,
+                            fontWeight: 700,
+                            textAlign: 'center',
+                            lineHeight: 1.4,
+                        }}
+                    >
                         {t(currentRouter.title, {
                             language: locale,
                             noWrap: true,
@@ -163,9 +172,14 @@ export async function getToolOgImage(locale: string, url: string) {
                     </div>
                     <div
                         style={{
+                            marginTop: 20,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                             color: '#c4c4c4',
                             fontSize: 18,
                             fontWeight: 400,
+                            textAlign: 'center',
                             lineHeight: 1.2,
                         }}
                     >
