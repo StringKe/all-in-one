@@ -1,3 +1,5 @@
+import { first } from 'lodash-es';
+
 import { toolRouters, type IToolRouter } from '@/tool';
 
 export * from './ToolWelcomePage';
@@ -71,6 +73,7 @@ export function getFlatRouter(skipGroup = true) {
 
 export function getAllSubTools(parentUrl: string): (IToolRouter & {
     parent?: IToolRouter;
+    parents?: IToolRouter[];
 })[] {
     const result: IToolRouter[] = [];
     eachRouter(toolRouters, (router) => {
@@ -80,14 +83,18 @@ export function getAllSubTools(parentUrl: string): (IToolRouter & {
         }
     });
     return result.map((item) => {
-        // 找到当前路由的父级路由
-        const parent = findRouter(item.url.replace(/\/[^/]+$/, ''));
-        if (parent) {
-            return {
-                ...item,
-                parent,
-            };
+        // 找到当前路由的所有父级路由
+        let parents: IToolRouter[] = [];
+        let parent = findRouterParent(item.url);
+        while (parent) {
+            parents.push(parent);
+            parent = findRouterParent(parent.url);
         }
-        return item;
+        parents = parents.reverse();
+        return {
+            ...item,
+            parent: first(parents),
+            parents: parents,
+        };
     });
 }
