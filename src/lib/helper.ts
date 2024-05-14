@@ -1,3 +1,5 @@
+import * as process from 'node:process';
+
 export const getPathnameFromMetadataState = (state: any): string | undefined => {
     const res = Object.getOwnPropertySymbols(state || {})
         .map((p) => state[p])
@@ -10,3 +12,12 @@ export const getPathnameFromMetadataState = (state: any): string | undefined => 
 
     return urlPathname.replace(/\?.+/, '');
 };
+
+export function getUrl(path: string, locale?: string) {
+    const host = process.env.NEXT_PUBLIC_HOST || 'https://yzos.com';
+    let fullPath = `/${locale ? locale : ''}${path === '/' ? '' : `/${path}`}`.replaceAll('//', '/');
+    if (fullPath.startsWith('/')) {
+        fullPath = fullPath.substring(1);
+    }
+    return `${host}/${fullPath}`;
+}
