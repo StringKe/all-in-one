@@ -3,9 +3,10 @@
 import { NavLink } from '@mantine/core';
 import { useTranslate } from '@tolgee/react';
 import { get } from 'lodash-es';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { usePathname } from '@/navigation';
+import { saveStateToLocalStorage, useNavbarState } from '@/lib/hooks';
+import { Link, usePathname } from '@/navigation';
 import type { IToolRouter } from '@/tool';
 
 function isPathActive(router: IToolRouter, pathname: string): boolean {
@@ -16,15 +17,6 @@ function isPathActive(router: IToolRouter, pathname: string): boolean {
         return router.children.some((child) => isPathActive(child, pathname));
     }
     return false;
-}
-
-function saveStateToLocalStorage(key: string, state: boolean) {
-    localStorage.setItem(key, JSON.stringify(state));
-}
-
-function getStateFromLocalStorage(key: string, defaultValue: boolean): boolean {
-    const state = localStorage.getItem(key);
-    return state ? JSON.parse(state) : defaultValue;
 }
 
 export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: number }) {
@@ -38,9 +30,7 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
         return children.length > 0 && isPathActive(router, pathname);
     }, [children.length, pathname, router]);
 
-    const [isOpened, setIsOpened] = useState(() => {
-        return getStateFromLocalStorage(router.url, defaultOpened);
-    });
+    const [isOpened, setIsOpened] = useNavbarState(router.url, defaultOpened);
 
     const onChange = (value: boolean) => {
         setIsOpened(value);
@@ -51,10 +41,6 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
             });
         }
     };
-
-    useEffect(() => {
-        saveStateToLocalStorage(router.url, isOpened);
-    }, [isOpened, router.url]);
 
     // 对 children 进行排序，将拥有子路由的放在前面
     const renderChildren = useMemo(() => {
@@ -82,6 +68,7 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
                 href={router.url}
                 label={t(router.title)}
                 leftSection={metadata?.icon}
+                component={Link}
             />
         );
     }
@@ -97,6 +84,7 @@ export function ToolNavbarItem({ router, level }: { router: IToolRouter; level: 
             opened={isOpened}
             defaultOpened={isOpened}
             onChange={onChange}
+            component={Link}
         >
             {renderChildren.map((child) => (
                 <ToolNavbarItem key={child.url} router={child} level={level + 1} />
