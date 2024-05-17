@@ -8,10 +8,7 @@
         "next:build": "next build",
         "build:tools": "esno dev-tools/tool-build.ts",
         "sync:locales": "esno dev-tools/sync-locales.ts",
-        "db:push": "prisma db push",
-        "db:studio": "prisma studio",
         "dev": "pnpm run build:tools && pnpm run sync:locales && next dev",
-        "postinstall": "prisma generate",
         "lint": "next lint",
         "start": "next start"
     },
@@ -35,7 +32,7 @@
         "@mantine/spotlight": "^7.9.1",
         "@mantine/tiptap": "^7.9.1",
         "@next/third-parties": "^14.2.3",
-        "@prisma/client": "^5.10.2",
+        "@reactuses/core": "^5.0.14",
         "@t3-oss/env-nextjs": "^0.10.1",
         "@tabler/icons-react": "^3.3.0",
         "@tanstack/react-query": "^5.36.0",
@@ -52,7 +49,7 @@
         "clsx": "^2.1.1",
         "dayjs": "^1.11.11",
         "embla-carousel-react": "^8.0.4",
-        "iron-session": "^8.0.1",
+        "jotai": "^2.8.0",
         "lodash-es": "^4.17.21",
         "lz-string": "^1.5.0",
         "merge-anything": "^5.1.7",
@@ -87,7 +84,6 @@
         "postcss-simple-vars": "^7.0.1",
         "prettier": "^3.2.5",
         "prettier-plugin-tailwindcss": "^0.5.14",
-        "prisma": "^5.10.2",
         "typescript": "^5.4.2"
     },
     "ct3aMetadata": {

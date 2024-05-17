@@ -1,17 +1,37 @@
 'use client';
 
 import { ActionIcon } from '@mantine/core';
+import { useCookie } from '@reactuses/core';
 import { IconViewportNarrow, IconViewportWide } from '@tabler/icons-react';
+import { atom, useAtom } from 'jotai';
+import { useEffect, useMemo } from 'react';
 
-import { api } from '@/trpc/react';
+const uiContainerAtom = atom('narrow');
 
-export function ContainerToggle() {
-    const { data: isFull, refetch } = api.config.isContainer.useQuery();
-    const { mutateAsync } = api.config.setIsContainer.useMutation();
+export function useUiContainer() {
+    const [cookieValue, updateCookie, refreshCookie] = useCookie('ui.is-container', {}, 'narrow');
+    const [uiContainer, setUiContainer] = useAtom(uiContainerAtom);
 
     const onToggle = () => {
-        mutateAsync({ isContainer: !isFull }).then(() => refetch());
+        updateCookie(cookieValue === 'full' ? 'narrow' : 'full');
+        setUiContainer((prev) => (prev === 'full' ? 'narrow' : 'full'));
+        refreshCookie();
     };
+
+    useEffect(() => {
+        setUiContainer(cookieValue || 'narrow');
+    }, [cookieValue, setUiContainer]);
+
+    const isFull = useMemo(() => uiContainer === 'full', [uiContainer]);
+
+    return {
+        isFull,
+        onToggle,
+    };
+}
+
+export function ContainerToggle() {
+    const { isFull, onToggle } = useUiContainer();
 
     return (
         <ActionIcon variant={isFull ? 'light' : 'subtle'} onClick={onToggle}>

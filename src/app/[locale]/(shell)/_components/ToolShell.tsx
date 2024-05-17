@@ -4,13 +4,13 @@ import { AppShell, Container } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { type PropsWithChildren } from 'react';
 
-import { api } from '@/trpc/react';
+import { useUiContainer } from '@/components/ContainerToggle';
 
 import { ToolHeader } from './ToolHeader';
 import { ToolNavbar } from './ToolNavbar';
 
 export function ToolShell({ children }: PropsWithChildren) {
-    const { data: isFull } = api.config.isContainer.useQuery();
+    const { isFull } = useUiContainer();
     const [opened, { toggle }] = useDisclosure();
 
     return (
